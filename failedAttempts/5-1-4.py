@@ -1,6 +1,6 @@
 import time
 fileContent = open("./sourcefiles/5-1.txt", "r")
-
+outfile = open("./destinationfiles/5-1.txt","w")
 seedsArray = []
 seedToSoil = False
 seedToSoilArray = []
@@ -16,15 +16,16 @@ temperatureToHumidity = False
 temperatureToHumidityArray = []
 humidityToLocation = False
 humidityToLocationArray = []
-lowest = -1
 
-starttime = time.time()
+resultsArray = []
+lowest = -1
 for lineContent in fileContent:
     if("seeds" in lineContent):
         seedsArray = lineContent.strip().split(" ")
         seedsArray.remove("seeds:")
     elif("seed-to-soil map" in lineContent or seedToSoil):
         seedToSoil = True
+        #print("seedToSoil")
         if("seed-to-soil map" not in lineContent and "soil-to-fertilizer map" not in lineContent):
             appendable = lineContent.strip().split(" ")
             if(appendable[0] != ""):
@@ -33,6 +34,7 @@ for lineContent in fileContent:
             seedToSoil = False
             soilToFertilizer = True
     elif(soilToFertilizer):
+        #print("soilToFertilizer")
         if("soil-to-fertilizer map" not in lineContent and "fertilizer-to-water map" not in lineContent):
             appendable = lineContent.strip().split(" ")
             if(appendable[0] != ""):
@@ -41,6 +43,7 @@ for lineContent in fileContent:
             soilToFertilizer = False
             fertilizerToWater = True
     elif(fertilizerToWater):
+        #print("fertilizerToWater")
         if("fertilizer-to-water map" not in lineContent and "water-to-light map" not in lineContent):
             appendable = lineContent.strip().split(" ")
             if(appendable[0] != ""):
@@ -49,6 +52,7 @@ for lineContent in fileContent:
             fertilizerToWater = False
             waterToLight = True
     elif(waterToLight):
+        #print("waterToLight")
         if("water-to-light map" not in lineContent and "light-to-temperature map" not in lineContent):
             appendable = lineContent.strip().split(" ")
             if(appendable[0] != ""):
@@ -57,6 +61,7 @@ for lineContent in fileContent:
             waterToLight = False
             lightToTemperature = True
     elif(lightToTemperature):
+        #print("lightToTemperature")
         if("light-to-temperature map" not in lineContent and "temperature-to-humidity map" not in lineContent):
             appendable = lineContent.strip().split(" ")
             if(appendable[0] != ""):
@@ -65,6 +70,7 @@ for lineContent in fileContent:
             lightToTemperature = False
             temperatureToHumidity = True
     elif(temperatureToHumidity):
+        #print("temperatureToHumidity")
         if("temperature-to-humidity map" not in lineContent and "humidity-to-location map" not in lineContent):
             appendable = lineContent.strip().split(" ")
             if(appendable[0] != ""):
@@ -73,6 +79,7 @@ for lineContent in fileContent:
             temperatureToHumidity = False
             humidityToLocation = True
     elif(humidityToLocation):
+        #print("humidityToLocation")
         if("temperature-to-humidity map" not in lineContent):
             appendable = lineContent.strip().split(" ")
             if(appendable[0] != ""):
@@ -80,15 +87,21 @@ for lineContent in fileContent:
 
 def functionThingy(array, source):
     destination = int(array[0]) + (int(source)-int(array[1]))
+
+    #print(str(source) + " -> " + str(destination) + "\n")
     return int(destination)
-resultsArray = []
 def seedIn(array):
     yap = True
     for results in resultsArray:
+        # print(array[0])
+        # print(resultsArray)print(array[0])
+        # print(resultsArray)
         if(array[0] == results[0]):
             yap = False
     return yap
 for seed in seedsArray:
+    outfile.write("NEW SEED: \n")
+    outfile.write(str(seed) + " SEED IS\n")
     for soil in seedToSoilArray:
         seedSoil = True
         fertDestination = 0
@@ -97,9 +110,13 @@ for seed in seedsArray:
             seedSoil = False
         else:
             if(seedToSoilArray[len(seedToSoilArray)-1] == soil and seedSoil):
+                
                 fertDestination = seed
                 seedSoil = False
         if(seedSoil == False):
+            outfile.write("soil")
+            outfile.write(str(seed) + " -> " + str(fertDestination)  + "\n")
+            #print(str(seed) + " -> " + str(fertDestination)  + "\n")
             for fertilizer in soilToFertilizerArray:
                 soilFert = True
                 watDestination = 0
@@ -111,6 +128,8 @@ for seed in seedsArray:
                         watDestination = fertDestination
                         soilFert = False
                 if(soilFert == False):
+                    outfile.write("fert")
+                    outfile.write(str(fertDestination) + " -> " + str(watDestination)  + "\n")
                     for water in fertilizerToWaterArray:
                         fertWat = True
                         if(int(water[1]) <= int(watDestination) and int(water[1])+int(water[2]) >= int(watDestination)):
@@ -121,6 +140,8 @@ for seed in seedsArray:
                                 lightDestination = watDestination
                                 fertWat = False
                         if(fertWat == False):
+                            outfile.write("wat")
+                            outfile.write(str(watDestination) + " -> " + str(lightDestination)  + "\n")
                             for light in waterToLightArray:
                                 watLight = True
                                 if(int(light[1]) <= int(lightDestination) and int(light[1])+int(light[2]) >= int(lightDestination)):  
@@ -131,16 +152,24 @@ for seed in seedsArray:
                                         tempDestination = lightDestination
                                         watLight = False
                                 if(watLight == False):    
+                                    outfile.write("light")
+                                    outfile.write(str(lightDestination) + " -> " + str(tempDestination)  + "\n")
                                     for temperature in lightToTemperatureArray:
                                         lightTemp = True
                                         if(int(temperature[1]) <= int(tempDestination) and int(temperature[1])+int(temperature[2]) >= int(tempDestination)):
                                             humidDestination = functionThingy(temperature, tempDestination)
                                             lightTemp = False
+                                            # print(str(humidDestination) + " - - - -")
+                                            # print(int(temperature[1]) < int(tempDestination))
+                                            # print(int(temperature[1])+int(temperature[2]) > int(tempDestination))
                                         else:
                                             if(lightToTemperatureArray[len(lightToTemperatureArray)-1] == temperature and lightTemp):
                                                 humidDestination = tempDestination
                                                 lightTemp = False
+                                                #print(humidDestination)
                                         if(lightTemp == False):
+                                            outfile.write("temp")
+                                            outfile.write(str(tempDestination) + " -> " + str(humidDestination)  + "\n")
                                             for humidity in temperatureToHumidityArray:
                                                 tempHumid = True
                                                 if(int(humidity[1]) <= int(humidDestination) and int(humidity[1])+int(humidity[2]) >= int(humidDestination)):
@@ -151,6 +180,8 @@ for seed in seedsArray:
                                                         locationDestination = humidDestination
                                                         tempHumid = False
                                                 if(tempHumid == False):
+                                                    outfile.write("humid")
+                                                    outfile.write(str(humidDestination) + " -> " + str(locationDestination)  + "\n")
                                                     for location in humidityToLocationArray:
                                                         humidLoca = True
                                                         if(int(location[1]) <= int(locationDestination) and int(location[1])+int(location[2]) >= int(locationDestination)):
@@ -161,15 +192,22 @@ for seed in seedsArray:
                                                                 locationFinalDestination = locationDestination
                                                                 humidLoca = False
                                                         if(humidLoca == False):
+                                                            if(lowest == -1):
+                                                                    lowest = locationFinalDestination
+                                                            else:
+                                                                if(int(lowest) >= int(locationFinalDestination)):
+                                                                    lowest = locationFinalDestination
+                                                            outfile.write("location")
+                                                            outfile.write(str(locationDestination) + " -> " + str(locationFinalDestination) + "\n")
                                                             if(seedIn([seed,locationFinalDestination])):
-                                                                if(lowest == -1):
-                                                                    lowest = [seed,locationFinalDestination]
-                                                                else:
-                                                                    if(int(lowest[1]) >= int(locationFinalDestination)):
-                                                                        lowest = [seed,locationFinalDestination]   
-                                                            resultsArray.append([seed,locationFinalDestination])                                                
+                                                                resultsArray.append([seed,locationFinalDestination])
+                                                            #print(str(lowest) + "---LOWEST---")
+print(resultsArray)
+lowest = resultsArray[0]
+for res in resultsArray:
+    if(int(lowest[1]) >= int(res[1])):
+        lowest = res
 print(lowest[1])
-print('That took {} seconds'.format(time.time() - starttime))
 #3:18 is when i started the program
 
 #try to cheat the loop with math
