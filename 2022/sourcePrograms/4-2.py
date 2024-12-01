@@ -11,23 +11,14 @@ for lineItem in fileContent:
 for pair in totalPairs:
     pair1 = list(range(int(pair[0][0]),int(pair[0][1])+1))
     pair2 = list(range(int(pair[1][0]),int(pair[1][1])+1))
-    total1 = True
-    total2 = True
+    total1 = False
+    total2 = False
     
     for items in pair1:
-        if items  in pair2:
-            pass
-            
-        else:
-            total1 = False
-
-
-
-    for items in pair2:
-        if items in pair1:
-            pass
-        else:
-            total2 = False
+        if items in pair2:
+            if total1 == False:
+                total += 1
+                total1 = True
 
 
     print(pair1)
@@ -35,9 +26,6 @@ for pair in totalPairs:
 
     print(total1)
     print(total2)
-
-    if total1 == True or total2 == True:
-        total += 1
 
 print(total)
 #276 is too low
@@ -50,3 +38,5 @@ print(total)
 #359 is not the right answer
 
 #507 is the right answer
+
+#897 is the right answer part2
