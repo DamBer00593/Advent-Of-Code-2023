@@ -1,0 +1,1 @@
+fileContent = open("./sourceFiles/4-1.txt", "r")

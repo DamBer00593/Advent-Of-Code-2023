@@ -5,16 +5,10 @@ for lineContent in fileContent:
     inputString += lineContent.strip()
 
 total = 0
-x = re.findall("mul\\(\\d{1,3},\\d{1,3}\\)|do\\(\\)|don't\\(\\)",inputString)
-doing = True
+x = re.findall("mul\\(\\d{1,3},\\d{1,3}\\)",inputString)
 for i in x:
-    if(i == "do()"):
-        doing = True
-    elif(i == "don't()"):
-        doing = False
-    elif doing:
-        i = i.replace("mul(","")
-        i = i.replace(")","")
-        splitString = i.split(",")
-        total += int(splitString[0]) * int(splitString[1])
+    i = i.replace("mul(","")
+    i = i.replace(")","")
+    splitString = i.split(",")
+    total += int(splitString[0]) * int(splitString[1])
 print(total)
